@@ -206,6 +206,23 @@ describe("ChatMarkdown streaming", () => {
 });
 
 describe("ChatMarkdown math", () => {
+  it("keeps known skill tokens available for inline skill chips", () => {
+    const html = renderToStaticMarkup(
+      <ChatMarkdown
+        cwd="/tmp/project"
+        skills={[
+          { name: "browser", displayName: "Browser" },
+          { name: "deploy", displayName: "Deploy" },
+        ]}
+        text="Use $browser and $deploy"
+      />,
+    );
+
+    expect(html.match(/data-markdown-copy="\$(?:browser|deploy)"/g)).toHaveLength(2);
+    expect(html).toContain("Browser");
+    expect(html).toContain("Deploy");
+  });
+
   it.each([true, false])(
     "renders inline and display LaTeX with accessible MathML when parseRawHtml=%s",
     (parseRawHtml) => {
